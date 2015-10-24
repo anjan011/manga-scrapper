@@ -34,7 +34,7 @@
             }
 
 
-            $this->_title = Input::array_value($data,'title','Chapter '.$this->_number,'trim');
+            $this->_title = Input::array_value($data,'title','','trim');
 
             if($this->_title == '') {
                 consoleLineError('Chapter title is required!');
@@ -51,7 +51,7 @@
          */
         public function getUrl() {
 
-            return $this->_url;
+            return trim($this->_url);
         }
 
         /**
@@ -59,7 +59,7 @@
          */
         public function getTitle() {
 
-            return $this->_title;
+            return trim($this->_title);
         }
 
         /**
@@ -67,15 +67,16 @@
          */
         public function getNumber() {
 
-            return $this->_number;
+            return trim($this->_number);
         }
 
         /**
-         * @param null $title_safe
+         * @return mixed|null|string
          */
-        public function setTitleSafe( $title_safe ) {
 
-            $this->_title_safe = $title_safe;
+        public function getTitleSafe() {
+
+            return $this->_title_safe;
         }
 
         function __toString() {

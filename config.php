@@ -21,6 +21,7 @@
             MANGA_ROOT_DIR.'includes/classes/chapters/',
             MANGA_ROOT_DIR.'includes/classes/manga/',
             MANGA_ROOT_DIR.'includes/classes/images/',
+            MANGA_ROOT_DIR.'includes/classes/arguments/',
         );
 
         foreach($dirs as $d) {

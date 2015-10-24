@@ -13,6 +13,14 @@
 
     require_once('config.php');
 
+    consoleLineInfo('');
+
+    # ========================================================
+    # PArse and prepare CLI arguments
+    # ========================================================
+
+    ArgumentsList::getInstance(ArgumentParser::prepareCliArguments());
+
     $mangaInfo = MangaInfo::getInstance(array(
         'source' => 'mangapanda',
         'name' => 'Nisekoi',
@@ -29,6 +37,18 @@
     consoleLineInfo('Fetching chapters for: '.$mangaInfo->getName());
     consoleLineInfo('Manga Url: '.$mangaInfo->getUrl());
     consoleLineInfo('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
+    # ========================================================
+    # Do we have chapter titles list already?
+    # ========================================================
+
+    $objChapterTitles = ChapterTitles::getInstance(array(
+        'mangaInfo' => $mangaInfo
+    ));
+
+    # ========================================================
+    # Prepare manag sattus object. we be gonna need it!
+    # ========================================================
 
     $mangaStatus = MangaStatus::getInstance(array(
         'mangaInfo' => $mangaInfo
@@ -71,6 +91,8 @@
     } else {
         consoleLineError("No new chapters to fetch!");
     }
+
+
 
     # ========================================================
     # Fetch new chapters
@@ -115,6 +137,8 @@
                 break;
 
         }
+
+        break;
     }
 
 

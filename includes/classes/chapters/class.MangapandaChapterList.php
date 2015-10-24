@@ -62,17 +62,28 @@
 
             $chapters = array();
 
+            $objChapterTitles = ChapterTitles::getInstance();
+
             for ( $i = 0; $i < count( $urls ); $i += 1 ) {
 
                 $url = $urls[$i];
 
                 if (preg_match('%^/'.$slug.'/(.*?)$%sim', $url, $regs)) {
+
                     $chapter_id = $regs[1];
+
+                    $existingTitle = $objChapterTitles->getChapterTitle($chapter_id);
+
+                    $title = $titles[$i];
+
+                    if($existingTitle != '') {
+                        $title = $existingTitle;
+                    }
 
                     $c = new ChapterInfo([
                         'number' => $chapter_id,
                         'url' => 'http://www.mangapanda.com'.$url,
-                        'title' => $titles[$i]
+                        'title' => $title
                     ]);
 
                     $chapters[$chapter_id] = $c;
