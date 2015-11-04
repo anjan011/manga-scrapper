@@ -9,11 +9,20 @@
 
     class ArgumentsList {
 
-        const ACTION_FETCH_NEW_CHAPTERS = 'fetch_new_chapters';
+        const ACTION_FETCH_NEW_CHAPTERS = 'new-chapters';
 
-        const ACTION_EXPORT_CHAPTER_TITLES = 'export_chapter_titles';
+        const ACTION_EXPORT_CHAPTER_TITLES = 'export-chapter-titles';
 
-        const ACTION_UPDATE_CHAPTER_TITLES = 'update_chapter_titles';
+        const ACTION_UPDATE_CHAPTER_TITLES = 'update-chapter-titles';
+
+        private $_allowed_param_names = array(
+            'slug',
+            'source',
+            'chapters-count',
+            'action',
+            'name',
+            'output-dir'
+        );
 
         /**
          * An array of action list
@@ -46,6 +55,8 @@
         private $_mangaName = '';
 
         private $_output_dir = '';
+
+        private $_chapters_count = 0;
 
         /**
          * is a valid action?
@@ -128,6 +139,19 @@
         private function parseData( $data = array() ) {
 
             $data = is_array($data) ? $data : array();
+
+            // check for valid params
+
+            $dataKeys = array_keys($data);
+
+            $diff = array_diff($dataKeys,$this->_allowed_param_names);
+
+            if(count($diff) > 0) {
+
+                consoleLineError("Invalid params: ".join(',',$diff),2);
+                exit();
+
+            }
 
             $this->_argumentsList = $data;
 
@@ -224,6 +248,18 @@
 
             $this->_output_dir = $output_dir;
 
+            # chapters count
+
+            $chaptersCount = Input::array_value_as_int($data,'chapters-count',0);
+
+            if($chaptersCount < 0) {
+                $chaptersCount = 0;
+            }
+
+            $this->_chapters_count = $chaptersCount;
+
+
+
         }
 
         /**
@@ -277,6 +313,20 @@
         public function getOutputDir() {
 
             return $this->_output_dir;
+        }
+
+        /**
+         * @return int
+         */
+        public function getChaptersCount() {
+
+            $count = (int)$this->_chapters_count;
+
+            if($count < 0) {
+                $count = 0;
+            }
+
+            return $count;
         }
 
     }

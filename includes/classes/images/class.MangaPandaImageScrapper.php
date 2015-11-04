@@ -140,11 +140,18 @@
 
                 $mangaStatus->updateCompletedChaptersList($completedChapters);
 
-                consoleLinePurple("Chapter ".$this->_chapterInfo->getTitle()." is not set as completed!");
+                consoleLinePurple("Chapter ".$this->_chapterInfo->getTitle()." is now set as completed!");
 
                 /* Create CBR */
 
-                $cbrDirPath = $this->_mangaInfo->getCbrDirPath();
+                $cbrCreator = new CbrCreator(array(
+                    'mangaInfo' => $this->_mangaInfo,
+                    'chapterInfo' => $this->_chapterInfo
+                ));
+
+                $cbrCreator->createCbr();
+
+                /*$cbrDirPath = $this->_mangaInfo->getCbrDirPath();
 
                 $cNum = $this->_chapterInfo->getNumber();
                 $cTitle = $this->_chapterInfo->getTitle();
@@ -156,7 +163,7 @@
 
                 consoleLineInfo(shell_exec($shellCommand));
 
-                consoleLinePurple("Created CBR file: ".$cbrFileName);
+                consoleLinePurple("Created CBR file: ".$cbrFileName);*/
 
 
             } else {

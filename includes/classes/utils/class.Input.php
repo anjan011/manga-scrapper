@@ -48,6 +48,40 @@
         }
 
         /**
+         * Array value as int
+         *
+         * @param      $array
+         * @param      $key
+         * @param int  $default
+         * @param null $callback
+         *
+         * @return int
+         */
+
+        public static function array_value_as_int( $array, $key, $default = 0 ,$callback = null) {
+
+            return (int)self::array_value($array,$key,$default,$callback);
+
+        }
+
+        /**
+         * Array value as float
+         *
+         * @param      $array
+         * @param      $key
+         * @param int  $default
+         * @param null $callback
+         *
+         * @return float
+         */
+
+        public static function array_value_as_float( $array, $key, $default = 0 ,$callback = null) {
+
+            return (float)self::array_value($array,$key,$default,$callback);
+
+        }
+
+        /**
          * Directly prints/returns a value from $_POST
          *
          * @param string $key     The key, can be a key path, like "data/name"
