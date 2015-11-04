@@ -6,7 +6,7 @@
      * Date: 10/21/15
      * Time: 10:57 AM
      */
-    class MangapandaChapterImages extends ChapterImages {
+    class MangaPandaChapterImages extends ChapterImages {
 
         public function __construct($data = array()) {
 

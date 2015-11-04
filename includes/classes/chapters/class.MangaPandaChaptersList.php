@@ -7,7 +7,7 @@
      * Time: 2:04 PM
      */
 
-    class MangapandaChapterList extends ChaptersList {
+    class MangaPandaChaptersList extends ChaptersList {
 
         private static $instance = NULL;
 

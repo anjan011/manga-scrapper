@@ -66,12 +66,33 @@
 
 
 
+                $imgFileName = $this->_mangaInfo->getSlug().
+                    '-'.
+                    str_pad($this->_chapterInfo->getNumber(),6,'0',STR_PAD_LEFT).
+                    '-'.
+                    str_pad($imgInfo->getNumber(),3,'0',STR_PAD_LEFT).
+                    '.jpg';
 
-                $destImagePath = $chapterImageDir.$imgInfo->getNumber().".jpg";
+                $destImagePath = $chapterImageDir.$imgFileName;
+
+                /* Kinda for backward compatibility */
+
+                $imgFileName1 = $imgInfo->getNumber().'.jpg';
+                $destImagePath1 = $chapterImageDir.$imgFileName1;
+
+                if(file_exists($destImagePath1)) {
+                    copy($destImagePath1,$destImagePath);
+
+                    unlink($destImagePath1);
+                }
+
 
                 if(file_exists($destImagePath)) {
-                    consoleLineBlue($destImagePath);
+
                     $totalFetched += 1;
+
+                    consoleLineBlue("[{$totalFetched}/$totalImages] ".$destImagePath);
+
                     continue;
                 }
 
@@ -88,16 +109,24 @@
                     consoleLineError($destImagePath);
                     continue;
                 } else {
-                    consoleLineSuccess($destImagePath);
+
+                    $totalFetched += 1;
+
+                    consoleLineSuccess("[{$totalFetched}/$totalImages] ".$destImagePath);
 
                     file_put_contents($destImagePath,$imageData);
 
-                    $totalFetched += 1;
+
                 }
 
             }
 
-            consoleLinePurple("Images fetched: {$totalFetched}/$totalImages");
+            if($totalFetched == $totalImages) {
+                consoleLinePurple("Images fetched: {$totalFetched}/$totalImages");
+            } else {
+                consoleLineError("Images fetched: {$totalFetched}/$totalImages");
+            }
+
 
             if($totalImages == $totalFetched) {
 
@@ -118,10 +147,16 @@
                 $cbrDirPath = $this->_mangaInfo->getCbrDirPath();
 
                 $cNum = $this->_chapterInfo->getNumber();
+                $cTitle = $this->_chapterInfo->getTitle();
+                $mSlug = $this->_mangaInfo->getSlug();
 
-                $shellCommand = "rar a {$cbrDirPath}{$cNum}.cbr {$chapterImageDir}*.jpg";
+                $cbrFileName = '['.$mSlug.'-'.str_pad($cNum,6,'0',STR_PAD_LEFT).'] - '.Sanitization::stripNonwordCharachters($cTitle,'-','lower').'.cbr';
+
+                $shellCommand = "rar a \"{$cbrDirPath}{$cbrFileName}\" {$chapterImageDir}*.jpg";
 
                 consoleLineInfo(shell_exec($shellCommand));
+
+                consoleLinePurple("Created CBR file: ".$cbrFileName);
 
 
             } else {

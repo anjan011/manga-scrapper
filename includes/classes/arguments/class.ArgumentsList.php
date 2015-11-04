@@ -10,8 +10,10 @@
     class ArgumentsList {
 
         const ACTION_FETCH_NEW_CHAPTERS = 'fetch_new_chapters';
-        const ACTION_FETCH_CHAPTER_TITLES = 'fetch_chapter_titles';
+
         const ACTION_EXPORT_CHAPTER_TITLES = 'export_chapter_titles';
+
+        const ACTION_UPDATE_CHAPTER_TITLES = 'update_chapter_titles';
 
         /**
          * An array of action list
@@ -20,14 +22,30 @@
          */
 
         private $_action_list = array(
-            self::ACTION_EXPORT_CHAPTER_TITLES,
-            self::ACTION_FETCH_CHAPTER_TITLES,
-            self::ACTION_FETCH_NEW_CHAPTERS
+            self::ACTION_EXPORT_CHAPTER_TITLES => array(
+                'desc' => 'Exports chapter titles to a CSV file'
+            ),
+
+            self::ACTION_FETCH_NEW_CHAPTERS => array(
+                'desc' => 'Check for new chapters and fetch them'
+            ),
+
+            self::ACTION_UPDATE_CHAPTER_TITLES => array(
+                'desc' => 'Updates chapter titles from titles CSV file'
+            ),
         );
 
         private $_argumentsList = array();
 
         private $_action = self::ACTION_FETCH_NEW_CHAPTERS;
+
+        private $_source = MangaSource::SOUCE_MANGAPANDA;
+
+        private $_mangaSlug = '';
+
+        private $_mangaName = '';
+
+        private $_output_dir = '';
 
         /**
          * is a valid action?
@@ -43,7 +61,7 @@
                 return false;
             }
 
-            return in_array($action,$this->_action_list);
+            return isset($this->_action_list[$action]);
         }
 
 
@@ -80,6 +98,27 @@
 
         }
 
+        public function displayInvalidActionMessage($exit = true) {
+
+            consoleLineError('Invalid action!',2);
+
+            consoleLinePurple('Example: --action='.self::ACTION_FETCH_NEW_CHAPTERS,2);
+
+            consoleLineInfo('Supported Actions - ');
+
+            foreach($this->_action_list as $ac => $acData) {
+                consoleLineInfo("\t* ".$ac.' - '.$acData['desc']);
+            }
+
+            consoleLineInfo('');
+
+            if($exit) {
+                exit();
+            }
+
+
+        }
+
         /**
          * Parses argument data
          *
@@ -101,18 +140,89 @@
             }
 
             if(!$this->isValidAction($action)) {
-                consoleLineError('Invalid action!',2);
 
-                consoleLineInfo('Supported Actions - ');
+                $this->displayInvalidActionMessage(true);
+            }
 
-                foreach($this->_action_list as $ac) {
-                    consoleLineInfo("\t* ".$ac);
-                }
+            // source
+
+            $source = Input::array_value($data,'source',MangaSource::SOUCE_MANGAPANDA,'trim');
+
+            if(MangaSource::getInstance()->isValidSource($source)) {
+                $this->_source = $source;
+            } else {
+                MangaSource::getInstance()->displayInvalidMangaSourceMessage(true);
+            }
+
+            // slug
+
+            $slug = Input::array_value($data,'slug','','trim');
+
+            if($slug == '') {
+                consoleLineError('Manga slug is required!',2);
+
+                consoleLinePurple('Example: --slug=nisekoi',2);
+
+                consoleLineInfo('Slug usualy means the SEO friendly name of the manga.',1);
+                consoleLineInfo('But it can be different for different manga sources.',1);
+                consoleLineInfo('The slug is part of the manga chapters list url.',2);
 
                 consoleLineInfo('');
 
                 exit();
             }
+
+            $this->_mangaSlug = $slug;
+
+            // name
+
+            $name = Input::array_value($data,'name','','trim');
+
+            if($name == '') {
+                $name = $this->_mangaSlug;
+            }
+
+            $this->_mangaName = $name;
+
+            // Output dir
+
+            $output_dir = Input::array_value($data,'output-dir','','trim');
+
+            if($output_dir == '') {
+                $output_dir = './manga/'.$this->_source.'/'.$this->_mangaSlug.'/';
+            }
+
+            if(!is_dir($output_dir)) {
+
+                if(!mkdir($output_dir,0777,true)) {
+
+                    consoleLineError("Unable to create output dir: ".$output_dir,2);
+
+                    consoleLineInfo('');
+
+                    exit();
+
+
+                }
+            } else {
+
+                $tmpFile = tempnam($output_dir,'mst-');
+
+                if(!fopen($tmpFile,'w')) {
+
+                    consoleLineError("Output dir is not writeable!".$output_dir,2);
+
+                    consoleLineInfo('');
+
+                    exit();
+
+                } else {
+                    @unlink($tmpFile);
+                }
+
+            }
+
+            $this->_output_dir = $output_dir;
 
         }
 
@@ -133,6 +243,40 @@
         public function getAction() {
 
             return trim($this->_action);
+        }
+
+        /**
+         * Get source name
+         *
+         * @return string
+         */
+        public function getSource() {
+
+            return trim($this->_source);
+        }
+
+        /**
+         * @return string
+         */
+        public function getMangaSlug() {
+
+            return trim($this->_mangaSlug);
+        }
+
+        /**
+         * @return string
+         */
+        public function getMangaName() {
+
+            return trim($this->_mangaName);
+        }
+
+        /**
+         * @return string
+         */
+        public function getOutputDir() {
+
+            return $this->_output_dir;
         }
 
     }
