@@ -9,7 +9,9 @@
 
     class ArgumentsList {
 
-        const ACTION_FETCH_NEW_CHAPTERS = 'new-chapters';
+        const ACTION_NEW_CHAPTERS = 'new-chapters';
+
+        const ACTION_SPECIFIC_CHAPTERS = 'specific-chapters';
 
         const ACTION_EXPORT_CHAPTER_TITLES = 'export-chapter-titles';
 
@@ -21,7 +23,8 @@
             'chapters-count',
             'action',
             'name',
-            'output-dir'
+            'output-dir',
+            'chapter-ids'
         );
 
         /**
@@ -35,8 +38,12 @@
                 'desc' => 'Exports chapter titles to a CSV file'
             ),
 
-            self::ACTION_FETCH_NEW_CHAPTERS => array(
+            self::ACTION_NEW_CHAPTERS => array(
                 'desc' => 'Check for new chapters and fetch them'
+            ),
+
+            self::ACTION_SPECIFIC_CHAPTERS => array(
+                'desc' => 'Fetch specific chapters by id'
             ),
 
             self::ACTION_UPDATE_CHAPTER_TITLES => array(
@@ -46,7 +53,7 @@
 
         private $_argumentsList = array();
 
-        private $_action = self::ACTION_FETCH_NEW_CHAPTERS;
+        private $_action = self::ACTION_NEW_CHAPTERS;
 
         private $_source = MangaSource::SOUCE_MANGAPANDA;
 
@@ -57,6 +64,8 @@
         private $_output_dir = '';
 
         private $_chapters_count = 0;
+
+        private $_chapter_ids = array();
 
         /**
          * is a valid action?
@@ -113,7 +122,7 @@
 
             consoleLineError('Invalid action!',2);
 
-            consoleLinePurple('Example: --action='.self::ACTION_FETCH_NEW_CHAPTERS,2);
+            consoleLinePurple('Example: --action='.self::ACTION_NEW_CHAPTERS,2);
 
             consoleLineInfo('Supported Actions - ');
 
@@ -159,13 +168,29 @@
 
             $action = Input::array_value($data,'action','','trim');
 
+
+
             if($action == '') {
-                $action = self::ACTION_FETCH_NEW_CHAPTERS;
+                $action = self::ACTION_NEW_CHAPTERS;
             }
 
             if(!$this->isValidAction($action)) {
 
                 $this->displayInvalidActionMessage(true);
+            } else {
+                $this->_action = $action;
+
+                if($this->_action == self::ACTION_SPECIFIC_CHAPTERS) {
+
+                    $chapterIds = Input::array_value($data,'chapter-ids','','trim');
+
+                    if($chapterIds == '') {
+                        consoleLineError('One or more chapter ids are required when action is "'.self::ACTION_SPECIFIC_CHAPTERS.'"');
+                        Console::emptyLines();
+                        exit();
+                    }
+
+                }
             }
 
             // source
@@ -258,7 +283,29 @@
 
             $this->_chapters_count = $chaptersCount;
 
+            # chapter ids
 
+            $chapterIds = Input::array_value($data,'chapter-ids','','trim');
+
+            if($chapterIds == '') {
+
+                $this->_chapter_ids = array();
+
+            } else {
+
+                // is it a file?
+
+                if(is_readable($chapterIds)) {
+                    $chapterIds = trim(file_get_contents($chapterIds));
+                }
+
+                $chapterIds = explode(',',$chapterIds);
+
+                $chapterIds = array_map('trim',$chapterIds);
+
+                $this->_chapter_ids = $chapterIds;
+
+            }
 
         }
 
@@ -327,6 +374,16 @@
             }
 
             return $count;
+        }
+
+        /**
+         * @return array
+         */
+
+        public function getChapterIds() {
+
+            return is_array($this->_chapter_ids) ? $this->_chapter_ids : array();
+
         }
 
     }

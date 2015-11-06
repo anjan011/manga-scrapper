@@ -1,22 +1,35 @@
 <?php
+    /**
+     * Created by PhpStorm.
+     * User: anjan
+     * Date: 11/5/15
+     * Time: 8:33 AM
+     */
 
-    # ========================================================
-    # Check for new chapters
-    # ========================================================
+    $specificChapterIds = $objArgumentsList->getChapterIds();
 
+    Console::seperatorLine();
 
+    consoleLinePurple("Fetching specific chapter(s): ".join(',',$specificChapterIds));
 
-    $completedChaptersList = $mangaStatus->getCompletedChaptersList();
+    Console::seperatorLine();
 
-    consoleLineInfo( "Completed chapters count: ".count( $completedChaptersList ), 1 );
+    consoleLineBlue('Checking chapter ids ...');
 
-    $newChapters = array_diff( $chapterrsList, $completedChaptersList );
+    $newChapters = array();
 
-    if ( !empty($newChapters) ) {
-        consoleLinePurple( "New chapters to fetch: ".count( $newChapters ) );
-    } else {
-        consoleLineError( "No new chapters to fetch!" );
+    foreach($specificChapterIds as $chapterId) {
+
+        if ( !isset($chapterrsList[ $chapterId ]) ) {
+            consoleLineError( "Invalid chapter id: ".$chapterId );
+            exit();
+        }
+        else {
+            $newChapters[ $chapterId ] = $chapterrsList[ $chapterId ];
+        }
+
     }
+
 
     if ( !empty($newChapters) ) {
 
@@ -119,11 +132,3 @@
         }
 
     }
-
-
-    # ========================================================
-    # Update status data
-    # ========================================================
-
-    $mangaStatus->updateChaptersTotalCount( count( $chapterrsList ) );
-    $mangaStatus->updateAllChaptersList( $chapterrsList );

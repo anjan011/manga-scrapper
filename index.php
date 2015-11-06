@@ -40,13 +40,13 @@
         'output_dir' => $objArgumentsList->getOutputDir(),
     ) );
 
+    Console::seperatorLine();
 
-    consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' );
     consoleLineInfo( 'Strating at: '.date( 'M d, Y h:i a', $startTime ) );
-    consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' );
+    Console::seperatorLine();
     consoleLineInfo( 'Fetching chapters for: '.$mangaInfo->getName() );
     consoleLineInfo( 'Manga Url: '.$mangaInfo->getUrl() );
-    consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' );
+    Console::seperatorLine();
 
     # ========================================================
     # Do we have chapter titles list already?
@@ -67,6 +67,8 @@
     # ========================================================
     # get chapters list!
     # ========================================================
+
+    consoleLinePurple("Updating chapters list from {$mangaInfo->getSource()} ...");
 
     /**
      * @var ChaptersList $objChaptersList
@@ -94,11 +96,18 @@
         exit();
     }
 
+    consoleLineInfo( "Found chapters: ".count( $chapterrsList ), 1 );
+
     switch ( $objArgumentsList->getAction() ) {
 
-        case ArgumentsList::ACTION_FETCH_NEW_CHAPTERS:
+        case ArgumentsList::ACTION_NEW_CHAPTERS:
 
             require_once(MANGA_ROOT_DIR.'includes/templates/actions/fetch-new-chapters/index.php');
+
+            break;
+        case ArgumentsList::ACTION_SPECIFIC_CHAPTERS:
+
+            require_once(MANGA_ROOT_DIR.'includes/templates/actions/fetch-specific-chapters/index.php');
 
             break;
         case ArgumentsList::ACTION_EXPORT_CHAPTER_TITLES:
@@ -109,9 +118,13 @@
     }
 
 
-    $endTime = time();
 
-    consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' );
+
+    Console::seperatorLine();
+
+    $endTime = time();
     consoleLineInfo( 'Ended at: '.date( 'M d, Y h:i a', $endTime ) );
-    consoleLineInfo( 'Total time taken: '.($endTime - $startTime).' seconds!' );
-    consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', 2 );
+    consoleLineInfo( 'Total time taken: '.Formatter::formattedTimeDifference($endTime - $startTime).' !' );
+
+    Console::seperatorLine();
+    Console::emptyLines(1);

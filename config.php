@@ -5,13 +5,13 @@
     define('MANGA_ROOT_DIR',dirname(__FILE__).'/');
 
 
-    $mangaInfo = array(
+    /*$mangaInfo = array(
         'site' => 'mangapanda',
         'chapters_url' => 'http://www.mangapanda.com/nisekoi',
         'id' => 3340,
         'slug' => 'nisekoi',
         'output_dir' => './manga/mangapanda/nisekoi'
-    );
+    );*/
 
     function autoload_classes($class_name) {
 
@@ -38,3 +38,12 @@
     }
 
     spl_autoload_register('autoload_classes');
+
+    /* Max console window width  */
+
+    define('MANGA_SCRAPPER_MAX_CONSOLE_WINDOW_WIDTH',80);
+
+    /* Console line seperator settings */
+
+    define('MANGA_SCRAPPER_SEPERATOR_LINE_CHAR','~');
+    define('MANGA_SCRAPPER_SEPERATOR_LINE_COLOR',ConsoleColors::COLOR_CYAN);
