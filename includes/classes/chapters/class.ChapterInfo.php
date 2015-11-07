@@ -17,6 +17,8 @@
 
         private $_title_safe = null;
 
+        private $_cbr_file_name = null;
+
         function __construct($data = array()) {
 
             $this->_number = Input::array_value($data,'number','','trim');
@@ -81,6 +83,22 @@
 
         function __toString() {
             return serialize($this);
+        }
+
+        /**
+         * @return null
+         */
+        public function getCbrFileName() {
+
+            return trim($this->_cbr_file_name);
+        }
+
+        /**
+         * @param null $cbr_file_name
+         */
+        public function setCbrFileName( $cbr_file_name ) {
+
+            $this->_cbr_file_name = trim($cbr_file_name);
         }
 
     }

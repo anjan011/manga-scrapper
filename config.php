@@ -4,14 +4,9 @@
 
     define('MANGA_ROOT_DIR',dirname(__FILE__).'/');
 
+    define('MANGA_SCRAPPER_VERSION','1.0.0');
 
-    /*$mangaInfo = array(
-        'site' => 'mangapanda',
-        'chapters_url' => 'http://www.mangapanda.com/nisekoi',
-        'id' => 3340,
-        'slug' => 'nisekoi',
-        'output_dir' => './manga/mangapanda/nisekoi'
-    );*/
+    define('MANGA_SCRAPPER_TAB_STR','    ');
 
     function autoload_classes($class_name) {
 

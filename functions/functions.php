@@ -332,5 +332,29 @@
         echo ConsoleColors::coloredText($message,ConsoleColors::COLOR_BLUE).str_repeat(PHP_EOL,$newlines);
     }
 
-    require_once('functions.manga-status.php');
-    require_once('functions.fetch-chapter.php');
+    function consoleLine($message = '',$newlines = 1) {
+
+        $newlines = (int)$newlines;
+
+        if($newlines < 0) {
+            $newlines = 0;
+        }
+
+        echo $message.str_repeat(PHP_EOL,$newlines);
+    }
+
+    /**
+     * Pad a string on right with spaces
+     *
+     * @param int    $text
+     * @param string $length
+     *
+     * @return string
+     */
+
+    function __pad_space_right($text = 0,$length = '') {
+
+        $length = (int)$length;
+
+        return str_pad($text,$length,' ',STR_PAD_RIGHT);
+    }

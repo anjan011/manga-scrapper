@@ -44,7 +44,8 @@
                 $ad = trim($ad);
 
                 if($ad == '' || strpos($ad,'--') !== 0) {
-                    continue;
+                    consoleLineError("Invalid param: ".$ad,2);
+                    exit();
                 }
 
                 $temp = explode('=',$ad,2);

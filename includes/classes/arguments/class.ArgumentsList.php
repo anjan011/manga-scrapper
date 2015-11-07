@@ -24,7 +24,9 @@
             'action',
             'name',
             'output-dir',
-            'chapter-ids'
+            'chapter-ids',
+            'help',
+            'url'
         );
 
         /**
@@ -33,21 +35,25 @@
          * @var array
          */
 
-        private $_action_list = array(
+        private static $_action_list = array(
             self::ACTION_EXPORT_CHAPTER_TITLES => array(
-                'desc' => 'Exports chapter titles to a CSV file'
+                'desc' => 'Exports chapter titles to a CSV file',
+                'default' => false
             ),
 
             self::ACTION_NEW_CHAPTERS => array(
-                'desc' => 'Check for new chapters and fetch them'
+                'desc' => 'Check for new chapters and fetch them',
+                'default' => true
             ),
 
             self::ACTION_SPECIFIC_CHAPTERS => array(
-                'desc' => 'Fetch specific chapters by id'
+                'desc' => 'Fetch specific chapters by id',
+                'default' => false
             ),
 
             self::ACTION_UPDATE_CHAPTER_TITLES => array(
-                'desc' => 'Updates chapter titles from titles CSV file'
+                'desc' => 'Updates chapter titles from titles CSV file',
+                'default' => false
             ),
         );
 
@@ -55,7 +61,7 @@
 
         private $_action = self::ACTION_NEW_CHAPTERS;
 
-        private $_source = MangaSource::SOUCE_MANGAPANDA;
+        private $_source = MangaSourceList::SOUCE_MANGAPANDA;
 
         private $_mangaSlug = '';
 
@@ -66,6 +72,8 @@
         private $_chapters_count = 0;
 
         private $_chapter_ids = array();
+
+        private $_show_help = false;
 
         /**
          * is a valid action?
@@ -81,7 +89,7 @@
                 return false;
             }
 
-            return isset($this->_action_list[$action]);
+            return isset(self::$_action_list[$action]);
         }
 
 
@@ -118,6 +126,12 @@
 
         }
 
+        /**
+         * Displays invalid action message and optionally exits
+         *
+         * @param bool|TRUE $exit
+         */
+
         public function displayInvalidActionMessage($exit = true) {
 
             consoleLineError('Invalid action!',2);
@@ -126,7 +140,7 @@
 
             consoleLineInfo('Supported Actions - ');
 
-            foreach($this->_action_list as $ac => $acData) {
+            foreach(self::$_action_list as $ac => $acData) {
                 consoleLineInfo("\t* ".$ac.' - '.$acData['desc']);
             }
 
@@ -147,7 +161,47 @@
 
         private function parseData( $data = array() ) {
 
+            // show help if requested and exit!
+
+            if(isset($data['help'])) {
+                require_once(MANGA_ROOT_DIR.'includes/templates/help/index.php');
+                exit();
+            }
+
             $data = is_array($data) ? $data : array();
+
+            // url
+
+            if(isset($data['url'])) {
+
+                $url = trim($data['url']);
+
+                if($url == '') {
+                    consoleLineError("Url parameter cannot be empty!");
+                    exit();
+                }
+
+                $parsedData = UrlParser::parseUrl($url);
+
+                if(!$parsedData) {
+                    consoleLineError("Provided url is not is not valid!");
+                    exit();
+                } else {
+
+                    $data['source'] = $parsedData['source'];
+
+                    $data['slug'] = $parsedData['slug'];
+
+                    $chapter = trim($parsedData['chapter']);
+
+                    if($chapter != '') {
+                        $data['chapter-ids'] = $chapter;
+                        $data['action'] = self::ACTION_SPECIFIC_CHAPTERS;
+                    }
+
+                }
+
+            }
 
             // check for valid params
 
@@ -195,12 +249,12 @@
 
             // source
 
-            $source = Input::array_value($data,'source',MangaSource::SOUCE_MANGAPANDA,'trim');
+            $source = Input::array_value($data,'source',MangaSourceList::SOUCE_MANGAPANDA,'trim');
 
-            if(MangaSource::getInstance()->isValidSource($source)) {
+            if(MangaSourceList::getInstance()->isValidSource($source)) {
                 $this->_source = $source;
             } else {
-                MangaSource::getInstance()->displayInvalidMangaSourceMessage(true);
+                MangaSourceList::getInstance()->displayInvalidMangaSourceMessage(true);
             }
 
             // slug
@@ -384,6 +438,24 @@
 
             return is_array($this->_chapter_ids) ? $this->_chapter_ids : array();
 
+        }
+
+        /**
+         * Should we display help content?
+         *
+         * @return boolean
+         */
+        public function isShowHelp() {
+
+            return $this->_show_help;
+        }
+
+        /**
+         * @return array
+         */
+        public static function getActionList() {
+
+            return self::$_action_list;
         }
 
     }

@@ -50,11 +50,12 @@
          * Prints some text on console
          *
          * @param string $message The text string
-         * @param int    $tabs Number of tabs to prepend
-         * @param string $color Text color
+         * @param int    $tabs    Number of tabs to prepend
+         * @param string $color   Text color
+         * @param bool   $return
          */
 
-        public static function text($message = '',$tabs = 0,$color = '') {
+        public static function text($message = '',$tabs = 0,$color = '',$return = false) {
 
             $tabs = (int)$tabs;
 
@@ -64,10 +65,16 @@
 
             $color = trim($color);
 
-            echo str_repeat("\t",$tabs);
+            echo str_repeat(MANGA_SCRAPPER_TAB_STR,$tabs);
+
+
 
             if($color != '') {
-                echo ConsoleColors::coloredText($message,$color,true);
+                $message = ConsoleColors::coloredText($message,$color,true);
+            }
+
+            if($return) {
+                return $message;
             } else {
                 echo $message;
             }
@@ -92,6 +99,41 @@
 
             echo ConsoleColors::coloredText($message,MANGA_SCRAPPER_SEPERATOR_LINE_COLOR);
             self::emptyLines(1);
+        }
+
+        /**
+         * Break a single line of text to span across multiple lines with some indenting text
+         *
+         * @param string     $str
+         * @param string     $indentText
+         * @param string     $color
+         * @param bool|FALSE $skipFirstLineIndent
+         */
+
+        public static function writeMultiline($str = '',$indentText = '',$color = '',$skipFirstLineIndent = false) {
+
+            $str = wordwrap($str,self::getConsoleWidth() - strlen($indentText));
+
+            $parts = explode("\n",$str);
+
+            $color = trim($color);
+
+            $i = 0;
+
+            foreach($parts as $p) {
+
+                if($skipFirstLineIndent && $i == 0) {
+                    self::text($p,0,$color);
+                } else {
+                    self::text($indentText.$p,0,$color);
+                }
+
+                self::emptyLines(1);
+
+                $i += 1;
+
+            }
+
         }
 
     }

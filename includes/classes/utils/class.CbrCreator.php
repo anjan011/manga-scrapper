@@ -63,6 +63,8 @@
 
             $shellCommand = "rar a \"{$cbrDirPath}{$cbrFileName}\" {$chapterImageDir}*.jpg";
 
+            $this->_chapterInfo->setCbrFileName($cbrFileName);
+
             consoleLineInfo(shell_exec($shellCommand));
 
             consoleLinePurple("Created CBR file: ".$cbrFileName);

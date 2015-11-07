@@ -14,7 +14,7 @@
 
     Console::seperatorLine();
 
-    consoleLineBlue('Checking chapter ids ...');
+    consoleLineBlue('Checking for valid chapter ids ...');
 
     $newChapters = array();
 

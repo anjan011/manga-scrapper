@@ -14,7 +14,7 @@
 
     require_once('config.php');
 
-    consoleLineInfo( '' );
+    Console::emptyLines(1);
 
 
     # ========================================================
@@ -31,7 +31,7 @@
         'source'     => $objArgumentsList->getSource(),
         'name'       => $objArgumentsList->getMangaName(),
         'slug'       => $objArgumentsList->getMangaSlug(),
-        'url'        => MangaSource::getInstance()->generateMangaChaptersUrl(
+        'url'        => MangaSourceList::getInstance()->generateMangaChaptersUrl(
             $objArgumentsList->getSource(),
             array(
                 'slug' => $objArgumentsList->getMangaSlug(),
@@ -76,7 +76,7 @@
 
     $objChaptersList = NULL;
 
-    $classPrefix = MangaSource::getInstance()->getSourceClassPrefix( $mangaInfo->getSource() );
+    $classPrefix = MangaSourceList::getInstance()->getSourceClassPrefix( $mangaInfo->getSource() );
 
     $classChaptersList = "{$classPrefix}ChaptersList";
 
