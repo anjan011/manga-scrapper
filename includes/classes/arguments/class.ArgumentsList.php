@@ -357,6 +357,53 @@
 
                 $chapterIds = array_map('trim',$chapterIds);
 
+                // check for ranges
+
+                $chapterRangesIds = array();
+
+                foreach ( $chapterIds as $k => $v ) {
+
+                    $cid = $chapterIds[$k];
+
+                    if (preg_match('/([0-9.]+)\s*-\s*([0-9.]+)/im', $cid, $regs)) {
+
+                        $chapterRangesIds[$k] = array(
+                            'start' => $regs[1],
+                            'end' => $regs[2]
+                        );
+
+                    }
+
+                }
+
+                if(count($chapterRangesIds) > 0) {
+
+                    // unset the range format entries first, as we are gonna get real
+                    // chapter ids from that range next
+
+                    foreach($chapterRangesIds as $k => $rangeData) {
+                        unset($chapterIds[$k]);
+                    }
+
+                    // get available chapters from ranges
+
+                    foreach($chapterRangesIds as $k => $rangeData) {
+
+                        $start = $rangeData['start'];
+                        $end = $rangeData['end'];
+
+                        for($i = $start;$i <= $end;$i += 1) {
+                            $chapterIds[] = $i;
+                        }
+
+                    }
+
+                }
+
+                asort($chapterIds);
+
+                $chapterIds = array_unique($chapterIds);
+
                 $this->_chapter_ids = $chapterIds;
 
             }
