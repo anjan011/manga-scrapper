@@ -42,6 +42,42 @@
     Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
 
     # ====================================================================
+    # By: anjan @ Nov 06, 2015 4:55 PM
+    # ====================================================================
+    # --chapters-count
+    # ====================================================================
+
+    Console::text(__pad_space_right("--chapters-count",$paramPadLength),1);
+
+    $blockText = 'Number of chapters to fetch. If a positive number is specified then only that number of chapters from the first will be fetched for the current run.';
+
+    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
+
+    # ====================================================================
+    # By: anjan @ Nov 06, 2015 4:55 PM
+    # ====================================================================
+    # --chapter-ids
+    # ====================================================================
+
+    Console::text(__pad_space_right("--chapter-id",$paramPadLength),1);
+
+    $blockText = 'Comma seperated list of chapter ids. Both individual chapter id and chapter ranges. Chapter ranges are replaced with integer chapter ids within and including the start and end. The final parsed chapter id list is sorted and free of duplicates. Example: 1,2,3,10-16,18 becomes 1,2,3,10,11,12,13,14,15,16,18';
+
+    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
+
+    # ====================================================================
+    # By: anjan @ Nov 06, 2015 4:55 PM
+    # ====================================================================
+    # --help
+    # ====================================================================
+
+    Console::text(__pad_space_right("--help",$paramPadLength),1);
+
+    $blockText = 'This help screen';
+
+    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
+
+    # ====================================================================
     # By: anjan @ Nov 06, 2015 5:00 PM
     # ====================================================================
     # --name
@@ -68,6 +104,18 @@
     # ====================================================================
     # By: anjan @ Nov 06, 2015 12:15 PM
     # ====================================================================
+    # --slug
+    # ====================================================================
+
+    Console::text(__pad_space_right("--slug",$paramPadLength),1);
+
+    $blockText = 'The manga slug or id by which the manga is identified on the source site. This is usually part of the mnaga chapters url page.'."Example: ".Console::text("nisekoi",0,ConsoleColors::COLOR_CYAN,true).' from '.Console::text("http://www.mangapanda.com/nisekoi",0,ConsoleColors::COLOR_CYAN,true);
+
+    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
+
+    # ====================================================================
+    # By: anjan @ Nov 06, 2015 12:15 PM
+    # ====================================================================
     # --source
     # ====================================================================
 
@@ -87,30 +135,12 @@
 
     Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
 
-    # ====================================================================
-    # By: anjan @ Nov 06, 2015 12:15 PM
-    # ====================================================================
-    # --slug
-    # ====================================================================
-
-    Console::text(__pad_space_right("--slug",$paramPadLength),1);
-
-    $blockText = 'The manga slug or id by which the manga is identified on the source site. This is usually part of the mnaga chapters url page.'."Example: ".Console::text("nisekoi",0,ConsoleColors::COLOR_CYAN,true).' from '.Console::text("http://www.mangapanda.com/nisekoi",0,ConsoleColors::COLOR_CYAN,true);
-
-    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
 
 
-    # ====================================================================
-    # By: anjan @ Nov 06, 2015 4:55 PM
-    # ====================================================================
-    # --chapters-count
-    # ====================================================================
 
-    Console::text(__pad_space_right("--chapters-count",$paramPadLength),1);
 
-    $blockText = 'Number of chapters to fetch. If a positive number is specified then only that number of chapters from the first will be fetched for the current run.';
 
-    Console::writeMultiline($blockText,MANGA_SCRAPPER_TAB_STR.$emptyPaddedStr,'',true);
+
 
     # ====================================================================
     # By: anjan @ Nov 06, 2015 12:15 PM
