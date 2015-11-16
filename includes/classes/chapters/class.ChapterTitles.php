@@ -8,6 +8,12 @@
      */
     class ChapterTitles {
 
+        /**
+         * Chapters list csv file path
+         *
+         * @var string
+         */
+
         private $_titlesCsvFilePath = '';
 
         /**
@@ -161,6 +167,14 @@
             }
 
             return '';
+
+        }
+
+        public function dumpChapterTitles() {
+
+            $allChapters = MangaStatus::getInstance()->getAllChaptersList();
+
+            print_r($allChapters);
 
         }
 

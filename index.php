@@ -111,6 +111,9 @@
 
             break;
         case ArgumentsList::ACTION_EXPORT_CHAPTER_TITLES:
+
+            $objChapterTitles->dumpChapterTitles();
+
             break;
         default:
             $objArgumentsList->displayInvalidActionMessage( TRUE );

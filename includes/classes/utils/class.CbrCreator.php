@@ -65,6 +65,8 @@
 
             $this->_chapterInfo->setCbrFileName($cbrFileName);
 
+            print_r($this->_chapterInfo);
+
             consoleLineInfo(shell_exec($shellCommand));
 
             consoleLinePurple("Created CBR file: ".$cbrFileName);

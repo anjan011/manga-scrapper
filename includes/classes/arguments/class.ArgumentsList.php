@@ -26,7 +26,8 @@
             'output-dir',
             'chapter-ids',
             'help',
-            'url'
+            'url',
+            'create-cbr'
         );
 
         /**
@@ -36,6 +37,7 @@
          */
 
         private static $_action_list = array(
+
             self::ACTION_EXPORT_CHAPTER_TITLES => array(
                 'desc' => 'Exports chapter titles to a CSV file',
                 'default' => false
@@ -74,6 +76,8 @@
         private $_chapter_ids = array();
 
         private $_show_help = false;
+
+        private $_create_cbr = true;
 
         /**
          * is a valid action?
@@ -408,6 +412,25 @@
 
             }
 
+
+            # create cbr
+
+            $createCbr = isset($data['create-cbr']) ? $data['create-cbr'] : true;
+
+            $result = strtolower(exec('type -p rar'));
+
+            if(strpos($result,'not found')) {
+                consoleLineError('rar doesnt seem to be installed in the system!');
+
+                $createCbr = false;
+            }
+
+            $this->_create_cbr = $createCbr;
+
+            if(!$this->_create_cbr) {
+                consoleLineError('.cbr files will not be created!');
+            }
+
         }
 
         /**
@@ -503,6 +526,14 @@
         public static function getActionList() {
 
             return self::$_action_list;
+        }
+
+        /**
+         * @return boolean
+         */
+        public function shouldCreateCbr () {
+
+            return $this->_create_cbr;
         }
 
     }

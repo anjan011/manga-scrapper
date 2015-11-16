@@ -33,6 +33,10 @@
 
         }
 
+        /**
+         * Fetch images
+         */
+
         public function fetchImages() {
 
             if(!is_array($this->_images) || count($this->_images) == 0) {
@@ -140,30 +144,22 @@
 
                 $mangaStatus->updateCompletedChaptersList($completedChapters);
 
-                consoleLinePurple("Chapter ".$this->_chapterInfo->getTitle()." is now set as completed!");
+                consoleLinePurple("Chapter [".$this->_chapterInfo->getTitle()."] is now set as completed!");
 
-                /* Create CBR */
+                if(ArgumentsList::getInstance()->shouldCreateCbr()) {
 
-                $cbrCreator = new CbrCreator(array(
-                    'mangaInfo' => $this->_mangaInfo,
-                    'chapterInfo' => $this->_chapterInfo
-                ));
+                    /* Create CBR */
 
-                $cbrCreator->createCbr();
+                    $cbrCreator = new CbrCreator(array(
+                        'mangaInfo' => $this->_mangaInfo,
+                        'chapterInfo' => $this->_chapterInfo
+                    ));
 
-                /*$cbrDirPath = $this->_mangaInfo->getCbrDirPath();
+                    $cbrCreator->createCbr();
 
-                $cNum = $this->_chapterInfo->getNumber();
-                $cTitle = $this->_chapterInfo->getTitle();
-                $mSlug = $this->_mangaInfo->getSlug();
+                }
 
-                $cbrFileName = '['.$mSlug.'-'.str_pad($cNum,6,'0',STR_PAD_LEFT).'] - '.Sanitization::stripNonwordCharachters($cTitle,'-','lower').'.cbr';
 
-                $shellCommand = "rar a \"{$cbrDirPath}{$cbrFileName}\" {$chapterImageDir}*.jpg";
-
-                consoleLineInfo(shell_exec($shellCommand));
-
-                consoleLinePurple("Created CBR file: ".$cbrFileName);*/
 
 
             } else {
