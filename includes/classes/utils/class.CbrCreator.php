@@ -21,6 +21,8 @@
 
         private $_chapterInfo = null;
 
+        private $_print_rar_output = true;
+
         function __construct($params = array()) {
 
             if(isset($params['mangaInfo']) && ($params['mangaInfo'] instanceof MangaInfo)) {
@@ -65,7 +67,12 @@
 
             $this->_chapterInfo->setCbrFileName($cbrFileName);
 
-            consoleLineInfo(shell_exec($shellCommand));
+            if($this->shouldPrintRarOutput()) {
+                consoleLineInfo(shell_exec($shellCommand));
+            } else {
+                shell_exec($shellCommand);
+            }
+
 
             consoleLinePurple("Created CBR file: ".$cbrFileName);
 
@@ -85,6 +92,22 @@
         public function getChapterInfo () {
 
             return $this->_chapterInfo;
+        }
+
+        /**
+         * @return boolean
+         */
+        public function shouldPrintRarOutput () {
+
+            return $this->_print_rar_output;
+        }
+
+        /**
+         * @param boolean $print_rar_output
+         */
+        public function setPrintRarOutput ( $print_rar_output ) {
+
+            $this->_print_rar_output = $print_rar_output;
         }
 
     }

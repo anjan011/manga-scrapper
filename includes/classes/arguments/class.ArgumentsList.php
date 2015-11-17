@@ -29,7 +29,8 @@
             'chapter-ids',
             'help',
             'url',
-            'create-cbr'
+            'create-cbr',
+            'no-cbr-backup'
         );
 
         /**
@@ -85,6 +86,8 @@
         private $_show_help = false;
 
         private $_create_cbr = true;
+
+        private $_no_cbr_backup = false;
 
         /**
          * is a valid action?
@@ -436,6 +439,14 @@
                 consoleLineError('.cbr files will not be created!');
             }
 
+            # no cbr backup
+
+            if($this->_action == self::ACTION_RECREATE_CBR) {
+
+                $this->_no_cbr_backup = isset($data['no-cbr-backup']) && $data['no-cbr-backup'];
+
+            }
+
         }
 
         /**
@@ -539,6 +550,14 @@
         public function shouldCreateCbr () {
 
             return $this->_create_cbr;
+        }
+
+        /**
+         * @return boolean
+         */
+        public function shouldKeepCbrBackup () {
+
+            return !$this->_no_cbr_backup;
         }
 
     }

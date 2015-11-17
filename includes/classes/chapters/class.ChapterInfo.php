@@ -101,4 +101,12 @@
             $this->_cbr_file_name = trim($cbr_file_name);
         }
 
+        /**
+         * @param mixed|null $title
+         */
+        public function setTitle ( $title ) {
+
+            $this->_title = trim($title);
+        }
+
     }

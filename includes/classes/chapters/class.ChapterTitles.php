@@ -174,7 +174,37 @@
 
             $allChapters = MangaStatus::getInstance()->getAllChaptersList();
 
-            print_r($allChapters);
+            $csvPath = $this->_mangaInfo->getOutputDir()
+                .'chapter-titles.'
+                .$this->_mangaInfo->getSource()
+                .'.'
+                .date('Y-m-d_H-i').'.csv';
+
+            $f = fopen($csvPath,'w');
+
+            if($f) {
+
+                /**
+                 * @var ChapterInfo $c
+                 */
+
+                foreach($allChapters as $c) {
+
+                    fputcsv($f,array(
+                        $c->getNumber(),
+                        $c->getTitle()
+                    ));
+
+                }
+
+                fclose($f);
+
+                consoleLinePurple("Titles exported to ".$csvPath);
+
+            } else {
+                consoleLineError("Unable to create file ".$csvPath);
+                exit();
+            }
 
         }
 

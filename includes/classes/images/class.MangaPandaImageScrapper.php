@@ -155,6 +155,8 @@
                         'chapterInfo' => $this->_chapterInfo
                     ));
 
+                    $cbrCreator->setPrintRarOutput(false);
+
                     $cbrCreator->createCbr();
 
                 }

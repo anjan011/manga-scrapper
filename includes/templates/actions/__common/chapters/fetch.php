@@ -16,7 +16,7 @@
 
     $fetchedCount = 0;
 
-    foreach ( $newChapters as $chapter ) {
+    foreach ( $newChapters as &$chapter ) {
 
         consoleLineInfo( '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' );
 
