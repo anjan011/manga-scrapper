@@ -65,12 +65,26 @@
 
             $this->_chapterInfo->setCbrFileName($cbrFileName);
 
-            print_r($this->_chapterInfo);
-
             consoleLineInfo(shell_exec($shellCommand));
 
             consoleLinePurple("Created CBR file: ".$cbrFileName);
 
+        }
+
+        /**
+         * @return MangaInfo
+         */
+        public function getMangaInfo () {
+
+            return $this->_mangaInfo;
+        }
+
+        /**
+         * @return ChapterInfo
+         */
+        public function getChapterInfo () {
+
+            return $this->_chapterInfo;
         }
 
     }

@@ -17,6 +17,8 @@
 
         const ACTION_UPDATE_CHAPTER_TITLES = 'update-chapter-titles';
 
+        const ACTION_RECREATE_CBR = 'recreate-cbr';
+
         private $_allowed_param_names = array(
             'slug',
             'source',
@@ -55,6 +57,11 @@
 
             self::ACTION_UPDATE_CHAPTER_TITLES => array(
                 'desc' => 'Updates chapter titles from titles CSV file',
+                'default' => false
+            ),
+
+            self::ACTION_RECREATE_CBR => array(
+                'desc' => 'Recreates .cbr files',
                 'default' => false
             ),
         );
@@ -270,9 +277,7 @@
 
                 consoleLinePurple('Example: --slug=nisekoi',2);
 
-                consoleLineInfo('Slug usualy means the SEO friendly name of the manga.',1);
-                consoleLineInfo('But it can be different for different manga sources.',1);
-                consoleLineInfo('The slug is part of the manga chapters list url.',2);
+                Console::writeMultiline('Slug usualy means the SEO friendly name of the manga. But it can be different for different manga sources.The slug is part of the manga chapters list url.');
 
                 consoleLineInfo('');
 
