@@ -8,7 +8,7 @@
      */
     class Url {
 
-        public static function curlFetch($url = '',$http_post = false,$postData = array()) {
+        public static function curlFetch($url = '',$http_post = false,$postData = array(),$curlOpts = array()) {
 
             $url = trim($url);
 
@@ -32,7 +32,11 @@
                     CURLOPT_SSL_VERIFYPEER => FALSE,
                     CURLOPT_RETURNTRANSFER => TRUE,
                     CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_USERAGENT => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
+                    CURLOPT_ENCODING => 'gzip'
                 );
+
+                $options = $curlOpts + $options;
 
                 if($http_post) {
                     $options[CURLOPT_POST] = true;

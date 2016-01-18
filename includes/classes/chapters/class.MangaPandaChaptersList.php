@@ -83,7 +83,8 @@
                     $c = new ChapterInfo([
                         'number' => $chapter_id,
                         'url' => 'http://www.mangapanda.com'.$url,
-                        'title' => $title
+                        'title' => $title,
+                        'mangaInfo' => $this->_mangaInfo
                     ]);
 
                     $chapters[$chapter_id] = $c;

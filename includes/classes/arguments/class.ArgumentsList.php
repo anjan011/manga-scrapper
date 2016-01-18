@@ -89,6 +89,10 @@
 
         private $_no_cbr_backup = false;
 
+        private $_username = '';
+
+        private $_password = '';
+
         /**
          * is a valid action?
          *
@@ -105,8 +109,6 @@
 
             return isset(self::$_action_list[$action]);
         }
-
-
 
         /**
          * @var ArgumentsList $instance
@@ -264,6 +266,7 @@
             // source
 
             $source = Input::array_value($data,'source',MangaSourceList::SOUCE_MANGAPANDA,'trim');
+
 
             if(MangaSourceList::getInstance()->isValidSource($source)) {
                 $this->_source = $source;
@@ -558,6 +561,38 @@
         public function shouldKeepCbrBackup () {
 
             return !$this->_no_cbr_backup;
+        }
+
+        /**
+         * @return string
+         */
+        public function getUsername() {
+
+            return trim($this->_username);
+        }
+
+        /**
+         * @param string $username
+         */
+        public function setUsername( $username ) {
+
+            $this->_username = trim($username);
+        }
+
+        /**
+         * @return string
+         */
+        public function getPassword() {
+
+            return trim($this->_password);
+        }
+
+        /**
+         * @param string $password
+         */
+        public function setPassword( $password ) {
+
+            $this->_password = trim($password);
         }
 
     }

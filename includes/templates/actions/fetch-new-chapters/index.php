@@ -10,7 +10,7 @@
 
     consoleLineInfo( "Completed chapters count: ".count( $completedChaptersList ), 1 );
 
-    $newChapters = array_diff( $chapterrsList, $completedChaptersList );
+    $newChapters = array_diff_key( $chapterrsList, $completedChaptersList );
 
     if ( !empty($newChapters) ) {
         consoleLinePurple( "New chapters to fetch: ".count( $newChapters ) );

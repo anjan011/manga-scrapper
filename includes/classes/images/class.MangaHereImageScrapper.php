@@ -5,7 +5,7 @@
      * Date: 10/21/15
      * Time: 12:49 PM
      */
-    class MangaPandaImageScrapper extends ImageScrapper {
+    class MangaHereImageScrapper extends ImageScrapper {
 
         function __construct($data = array()) {
 
@@ -99,14 +99,19 @@
                     continue;
                 }
 
+
+
                 $imageUrl = $this->getImageUrl($imgInfo->getPageUrl());
+
 
                 if($imageUrl == '') {
                     consoleLineError($destImagePath);
                     continue;
                 }
 
-                $imageData = Url::curlFetch($imageUrl);
+                $imageData = Url::curlFetch($imageUrl,'',array(),array(
+
+                ));
 
                 if(!$imageData) {
                     consoleLineError($destImagePath);
@@ -198,7 +203,7 @@
 
             $regs = array();
 
-            if (preg_match('/<img.*?id="img".*?src="([^"]+)".*?>/sim', $content, $regs)) {
+            if (preg_match('/<img\s+src="(.*?)".+?id="image"[^>]+?>/simx', $content, $regs)) {
                 $result = $regs[1];
             } else {
                 $result = "";

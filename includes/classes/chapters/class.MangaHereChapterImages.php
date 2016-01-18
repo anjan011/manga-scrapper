@@ -6,7 +6,7 @@
      * Date: 10/21/15
      * Time: 10:57 AM
      */
-    class MangaPandaChapterImages extends ChapterImages {
+    class MangaHereChapterImages extends ChapterImages {
 
         public function __construct($data = array()) {
 
@@ -41,40 +41,47 @@
                 consoleLineError("Unable to fetch content from ".$chapterUrl,2);
             }
 
-            $result = array();
+            $html = '';
 
-            preg_match_all(
-                $this->getImageLinkRegex(),
-                $content,
-                $result,
-                PREG_PATTERN_ORDER
-            );
+            if (preg_match('%(<select\s+class="wid60"[^>]+>.*?</select>)%simx', $content, $regs)) {
+                $html = $regs[1];
+            }
 
-            $urls = $result[1];
-            $numbers = $result[2];
+            if(!$html) {
+                consoleLineError('Unable to fetch chapter image urls from: '.$chapterUrl);
+                exit();
+            }
 
-            $imageInfo = array();
+            try {
 
-            if(is_array($urls) && is_array($numbers)) {
+                $xml = simplexml_load_string($html);
 
-                $loopStart = 0;
-                $loopEnd = count( $urls );
+                $imageInfo = array();
 
-                for ( $i = $loopStart; $i < $loopEnd; $i += 1 ) {
+                foreach($xml->option as $o) {
+
+                    $number = (string)$o;
+                    $url = (string)$o->attributes()['value'];
 
                     $imageInfo[] = new ImageInfo(array(
-                        'number' => $numbers[$i],
-                        'pageUrl' => 'http://www.mangapanda.com'.$urls[$i]
+                        'number' => $number,
+                        'pageUrl' => $url
                     ));
-
                 }
+
+                return $imageInfo;
+
+            }
+            catch(Exception $ex) {
+
+                consoleLineError('Unable to fetch chapter image urls from: '.$chapterUrl);
+                exit();
 
             }
 
-            return $imageInfo;
         }
 
         public function getImageLinkRegex() {
-            return '%<option.*?value="([^"]+)".*?>(.*?)</option>%sim';
+            return '';
         }
     }

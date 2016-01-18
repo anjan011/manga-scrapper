@@ -42,9 +42,9 @@
                 'chapterInfo' => $chapter,
             ] );
 
-            $imagesUrl = $objChapterImages->getImagePageUrls();
+            $imageUrlList = $objChapterImages->getImagePageUrls();
 
-            consoleLinePurple( "Found images: ".count( $imagesUrl ) );
+            consoleLinePurple( "Found images: ".count( $imageUrlList ) );
 
             $classImageScrapper = $classPrefix.'ImageScrapper';
 
@@ -57,7 +57,7 @@
                 $objImageScrapper = new $classImageScrapper( [
                     'mangaInfo'   => $mangaInfo,
                     'chapterInfo' => $chapter,
-                    'images'      => $imagesUrl,
+                    'images'      => $imageUrlList,
                 ] );
 
                 $objImageScrapper->fetchImages();

@@ -9,6 +9,12 @@
 
     class ChapterInfo {
 
+        /**
+         * @var MangaInfo $_mangaInfo
+         */
+
+        private $_mangaInfo = null;
+
         private $_number = null;
 
         private $_title = null;
@@ -20,6 +26,12 @@
         private $_cbr_file_name = null;
 
         function __construct($data = array()) {
+
+            if(!isset($data['mangaInfo']) || !($data['mangaInfo'] instanceof MangaInfo)) {
+                consoleLineError('ChapterInfo object requires a MangaInfo object!');
+            }
+
+            $this->_mangaInfo = $data['mangaInfo'];
 
             $this->_number = Input::array_value($data,'number','','trim');
 
@@ -45,7 +57,7 @@
 
             $this->_title_safe = Sanitization::stripNonwordCharachters($this->_title,'-','lower');
 
-
+            $this->_cbr_file_name = sprintf("[%s-%s] %s.cbr",$this->_mangaInfo->getSlug(),$this->_number,$this->_title_safe);
         }
 
         /**
