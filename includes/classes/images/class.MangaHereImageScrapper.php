@@ -62,11 +62,20 @@
 
             foreach($this->_images as $imgInfo) {
 
+
+
                 if(!($imgInfo instanceof ImageInfo)) {
                     consoleLineError("Incorrect image info!");
                     exit();
                 }
 
+                /*# sleep randomly
+
+                $sleepTime = mt_rand(0,10);
+
+                consoleLineInfo("Sleeping for ".$sleepTime.' sec(s)');
+
+                sleep($sleepTime);*/
 
 
                 $imgFileName = $this->_mangaInfo->getSlug().
@@ -90,7 +99,7 @@
                 }
 
 
-                if(file_exists($destImagePath)) {
+                if(file_exists($destImagePath) && Validator::isValidImageData(file_get_contents($destImagePath))) {
 
                     $totalFetched += 1;
 
@@ -113,7 +122,7 @@
 
                 ));
 
-                if(!$imageData) {
+                if(!$imageData || !Validator::isValidImageData($imageData)) {
                     consoleLineError($destImagePath);
                     continue;
                 } else {
@@ -122,7 +131,11 @@
 
                     consoleLineSuccess("[{$totalFetched}/$totalImages] ".$destImagePath);
 
-                    file_put_contents($destImagePath,$imageData);
+                    if(!@file_put_contents($destImagePath,$imageData)) {
+                        consoleLineError('Unable to write iamge to '.$destImagePath);
+
+                        exit();
+                    }
 
 
                 }

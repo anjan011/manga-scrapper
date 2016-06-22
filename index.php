@@ -6,13 +6,15 @@
      * Time: 2:19 PM
      */
 
-    ini_set ( 'display_errors', TRUE );
-    error_reporting ( E_ALL );
+
 
     $startTime = time ();
 
 
     require_once ( 'config.php' );
+
+    ini_set ( 'display_errors', TRUE );
+    error_reporting ( E_ALL );
 
     Console::emptyLines ( 1 );
 
@@ -88,21 +90,32 @@
 
         $classChaptersList = "{$classPrefix}ChaptersList";
 
+
+
         if ( class_exists ( $classChaptersList ) ) {
             $objChaptersList = $classChaptersList::getInstance ( array (
                 'mangaInfo' => $mangaInfo,
             ) );
+
         }
 
 
         if ( $objChaptersList ) {
+
             $chapterrsList = $objChaptersList->getChapters ();
+
+            if(!is_array($chapterrsList) || empty($chapterrsList)) {
+                consoleLineError('Unable to fetch chapters list!');
+                exit();
+            }
         }
         else {
             consoleLineError ( 'Unsupported manga host!' );
 
             exit();
         }
+
+
 
         consoleLineInfo ( "Found chapters: " . count ( $chapterrsList ), 1 );
     }
@@ -122,6 +135,11 @@
         case ArgumentsList::ACTION_EXPORT_CHAPTER_TITLES:
 
             $objChapterTitles->dumpChapterTitles ();
+
+            break;
+        case ArgumentsList::ACTION_SHOW_CHAPTERS:
+
+            $objChapterTitles->showChapters ();
 
             break;
         case ArgumentsList::ACTION_RECREATE_CBR:

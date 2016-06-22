@@ -22,4 +22,16 @@
 
         }
 
+        public static function isValidImageData( $imageData = null) {
+
+            if(!$imageData) {
+                return false;
+            }
+
+            $imageInfo = getimagesizefromstring($imageData);
+
+            return !($imageInfo === false);
+
+        }
+
     }

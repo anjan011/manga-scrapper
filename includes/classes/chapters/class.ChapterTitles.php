@@ -208,4 +208,20 @@
 
         }
 
+        public function showChapters() {
+
+            $allChapters = MangaStatus::getInstance()->getAllChaptersList();
+
+            /**
+             * @var ChapterInfo $c
+             */
+
+            foreach($allChapters as $c) {
+
+                consoleLineInfo($c->getNumber(true).' : '.$c->getTitle());
+
+            }
+
+        }
+
     }

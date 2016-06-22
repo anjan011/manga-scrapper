@@ -67,14 +67,15 @@
         private function _getChapterInfo( $listHtml = '' ) {
 
             try {
+                
 
                 $chapterInfo = array(
                     'mangaInfo' => $this->_mangaInfo
                 );
 
-                $xml = simplexml_load_string( $listHtml );
+                $xml = @simplexml_load_string( $listHtml );
 
-                if ( $xml->count() >= 1 ) {
+                if ( $xml && $xml->count() >= 1 ) {
 
                     $children = $xml->children();
 
@@ -82,9 +83,7 @@
 
 
 
-                    $title = trim( (string) $info );
 
-                    $chapterInfo[ 'title' ] = $title;
 
                     $a = $info->a;
 
@@ -103,9 +102,20 @@
 
                             $chapterInfo[ 'number' ] = $chapter;
 
+                            $title = trim( (string) $info );
+
+                            if($title == '') {
+                                $title = $this->_mangaInfo->getName().' '.$chapter;
+                            }
+
+                            $chapterInfo[ 'title' ] = $title;
+
                         }
                     }
 
+                } else {
+                    consoleLineError('Unable to parse chapter info!');
+                    exit();
                 }
 
 
@@ -114,7 +124,9 @@
 
             }
             catch ( Exception $ex ) {
-                return FALSE;
+
+                consoleLineError($ex->getMessage());
+                exit();
             }
 
         }

@@ -74,7 +74,13 @@
             }
 
 
+
+
             consoleLinePurple("Created CBR file: ".$cbrFileName);
+
+            if(file_exists($cbrDirPath.$cbrFileName)) {
+                //shell_exec("notify-send --hint int:transient:1 -u low -t 2000 \".cbr created\" \"CBR file {$cbrFileName} created!\"");
+            }
 
         }
 

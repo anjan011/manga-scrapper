@@ -13,6 +13,8 @@
 
         const ACTION_SPECIFIC_CHAPTERS = 'specific-chapters';
 
+        const ACTION_SHOW_CHAPTERS = 'show-chapters';
+
         const ACTION_EXPORT_CHAPTER_TITLES = 'export-chapter-titles';
 
         const ACTION_UPDATE_CHAPTER_TITLES = 'update-chapter-titles';
@@ -53,6 +55,11 @@
 
             self::ACTION_SPECIFIC_CHAPTERS => array(
                 'desc' => 'Fetch specific chapters by id',
+                'default' => false
+            ),
+
+            self::ACTION_SHOW_CHAPTERS => array(
+                'desc' => 'Show chapterss',
                 'default' => false
             ),
 

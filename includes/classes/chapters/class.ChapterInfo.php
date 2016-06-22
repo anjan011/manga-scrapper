@@ -77,11 +77,18 @@
         }
 
         /**
+         * @param bool $original
+         *
          * @return null
          */
-        public function getNumber() {
+        public function getNumber($original = false) {
 
-            return trim($this->_number);
+            if($original) {
+                return  trim($this->_number);
+            } else {
+                return  Sanitization::stripNonwordCharachters(trim($this->_number));
+            }
+
         }
 
         /**
