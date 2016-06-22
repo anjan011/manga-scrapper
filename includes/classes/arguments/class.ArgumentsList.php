@@ -6,7 +6,6 @@
      * Date: 10/24/15
      * Time: 5:14 PM
      */
-
     class ArgumentsList {
 
         const ACTION_NEW_CHAPTERS = 'new-chapters';
@@ -32,7 +31,9 @@
             'help',
             'url',
             'create-cbr',
-            'no-cbr-backup'
+            'no-cbr-backup',
+            'image-delay',
+            'chapter-delay'
         );
 
         /**
@@ -44,33 +45,33 @@
         private static $_action_list = array(
 
             self::ACTION_EXPORT_CHAPTER_TITLES => array(
-                'desc' => 'Exports chapter titles to a CSV file',
-                'default' => false
+                'desc'    => 'Exports chapter titles to a CSV file',
+                'default' => FALSE,
             ),
 
             self::ACTION_NEW_CHAPTERS => array(
-                'desc' => 'Check for new chapters and fetch them',
-                'default' => true
+                'desc'    => 'Check for new chapters and fetch them',
+                'default' => TRUE,
             ),
 
             self::ACTION_SPECIFIC_CHAPTERS => array(
-                'desc' => 'Fetch specific chapters by id',
-                'default' => false
+                'desc'    => 'Fetch specific chapters by id',
+                'default' => FALSE,
             ),
 
             self::ACTION_SHOW_CHAPTERS => array(
-                'desc' => 'Show chapterss',
-                'default' => false
+                'desc'    => 'Show chapterss',
+                'default' => FALSE,
             ),
 
             self::ACTION_UPDATE_CHAPTER_TITLES => array(
-                'desc' => 'Updates chapter titles from titles CSV file',
-                'default' => false
+                'desc'    => 'Updates chapter titles from titles CSV file',
+                'default' => FALSE,
             ),
 
             self::ACTION_RECREATE_CBR => array(
-                'desc' => 'Recreates .cbr files',
-                'default' => false
+                'desc'    => 'Recreates .cbr files',
+                'default' => FALSE,
             ),
         );
 
@@ -90,15 +91,19 @@
 
         private $_chapter_ids = array();
 
-        private $_show_help = false;
+        private $_show_help = FALSE;
 
-        private $_create_cbr = true;
+        private $_create_cbr = TRUE;
 
-        private $_no_cbr_backup = false;
+        private $_no_cbr_backup = FALSE;
 
         private $_username = '';
 
         private $_password = '';
+
+        private $_chapter_delay = '';
+
+        private $_image_delay = '';
 
         /**
          * is a valid action?
@@ -108,13 +113,13 @@
          * @return bool
          */
 
-        public function isValidAction($action = '') {
+        public function isValidAction( $action = '' ) {
 
-            if(!is_string($action)) {
-                return false;
+            if ( !is_string( $action ) ) {
+                return FALSE;
             }
 
-            return isset(self::$_action_list[$action]);
+            return isset(self::$_action_list[ $action ]);
         }
 
         /**
@@ -143,9 +148,9 @@
          * @param array $data
          */
 
-        private function __construct($data = array()) {
+        private function __construct( $data = array() ) {
 
-            $this->parseData($data);
+            $this->parseData( $data );
 
         }
 
@@ -155,21 +160,21 @@
          * @param bool|TRUE $exit
          */
 
-        public function displayInvalidActionMessage($exit = true) {
+        public function displayInvalidActionMessage( $exit = TRUE ) {
 
-            consoleLineError('Invalid action!',2);
+            consoleLineError( 'Invalid action!', 2 );
 
-            consoleLinePurple('Example: --action='.self::ACTION_NEW_CHAPTERS,2);
+            consoleLinePurple( 'Example: --action='.self::ACTION_NEW_CHAPTERS, 2 );
 
-            consoleLineInfo('Supported Actions - ');
+            consoleLineInfo( 'Supported Actions - ' );
 
-            foreach(self::$_action_list as $ac => $acData) {
-                consoleLineInfo("\t* ".$ac.' - '.$acData['desc']);
+            foreach ( self::$_action_list as $ac => $acData ) {
+                consoleLineInfo( "\t* ".$ac.' - '.$acData[ 'desc' ] );
             }
 
-            consoleLineInfo('');
+            consoleLineInfo( '' );
 
-            if($exit) {
+            if ( $exit ) {
                 exit();
             }
 
@@ -186,40 +191,49 @@
 
             // show help if requested and exit!
 
-            if(isset($data['help'])) {
+            if ( isset($data[ 'help' ]) ) {
                 require_once(MANGA_ROOT_DIR.'includes/templates/help/index.php');
                 exit();
             }
 
-            $data = is_array($data) ? $data : array();
+            $data = is_array( $data ) ? $data : array();
+
+            // image delay
+
+            $this->setImageDelay(Input::array_value( $data, 'image-delay', '', 'trim' ));
+
+            // chapter delay
+
+            $this->setChapterDelay(Input::array_value( $data, 'chapter-delay', '', 'trim' ));
 
             // url
 
-            if(isset($data['url'])) {
+            if ( isset($data[ 'url' ]) ) {
 
-                $url = trim($data['url']);
+                $url = trim( $data[ 'url' ] );
 
-                if($url == '') {
-                    consoleLineError("Url parameter cannot be empty!");
+                if ( $url == '' ) {
+                    consoleLineError( "Url parameter cannot be empty!" );
                     exit();
                 }
 
-                $parsedData = UrlParser::parseUrl($url);
+                $parsedData = UrlParser::parseUrl( $url );
 
-                if(!$parsedData) {
-                    consoleLineError("Provided url is not is not valid!");
+                if ( !$parsedData ) {
+                    consoleLineError( "Provided url is not is not valid!" );
                     exit();
-                } else {
+                }
+                else {
 
-                    $data['source'] = $parsedData['source'];
+                    $data[ 'source' ] = $parsedData[ 'source' ];
 
-                    $data['slug'] = $parsedData['slug'];
+                    $data[ 'slug' ] = $parsedData[ 'slug' ];
 
-                    $chapter = trim($parsedData['chapter']);
+                    $chapter = trim( $parsedData[ 'chapter' ] );
 
-                    if($chapter != '') {
-                        $data['chapter-ids'] = $chapter;
-                        $data['action'] = self::ACTION_SPECIFIC_CHAPTERS;
+                    if ( $chapter != '' ) {
+                        $data[ 'chapter-ids' ] = $chapter;
+                        $data[ 'action' ] = self::ACTION_SPECIFIC_CHAPTERS;
                     }
 
                 }
@@ -228,13 +242,13 @@
 
             // check for valid params
 
-            $dataKeys = array_keys($data);
+            $dataKeys = array_keys( $data );
 
-            $diff = array_diff($dataKeys,$this->_allowed_param_names);
+            $diff = array_diff( $dataKeys, $this->_allowed_param_names );
 
-            if(count($diff) > 0) {
+            if ( count( $diff ) > 0 ) {
 
-                consoleLineError("Invalid params: ".join(',',$diff),2);
+                consoleLineError( "Invalid params: ".join( ',', $diff ), 2 );
                 exit();
 
             }
@@ -243,26 +257,26 @@
 
             // action
 
-            $action = Input::array_value($data,'action','','trim');
+            $action = Input::array_value( $data, 'action', '', 'trim' );
 
 
-
-            if($action == '') {
+            if ( $action == '' ) {
                 $action = self::ACTION_NEW_CHAPTERS;
             }
 
-            if(!$this->isValidAction($action)) {
+            if ( !$this->isValidAction( $action ) ) {
 
-                $this->displayInvalidActionMessage(true);
-            } else {
+                $this->displayInvalidActionMessage( TRUE );
+            }
+            else {
                 $this->_action = $action;
 
-                if($this->_action == self::ACTION_SPECIFIC_CHAPTERS) {
+                if ( $this->_action == self::ACTION_SPECIFIC_CHAPTERS ) {
 
-                    $chapterIds = Input::array_value($data,'chapter-ids','','trim');
+                    $chapterIds = Input::array_value( $data, 'chapter-ids', '', 'trim' );
 
-                    if($chapterIds == '') {
-                        consoleLineError('One or more chapter ids are required when action is "'.self::ACTION_SPECIFIC_CHAPTERS.'"');
+                    if ( $chapterIds == '' ) {
+                        consoleLineError( 'One or more chapter ids are required when action is "'.self::ACTION_SPECIFIC_CHAPTERS.'"' );
                         Console::emptyLines();
                         exit();
                     }
@@ -272,27 +286,28 @@
 
             // source
 
-            $source = Input::array_value($data,'source',MangaSourceList::SOUCE_MANGAPANDA,'trim');
+            $source = Input::array_value( $data, 'source', MangaSourceList::SOUCE_MANGAPANDA, 'trim' );
 
 
-            if(MangaSourceList::getInstance()->isValidSource($source)) {
+            if ( MangaSourceList::getInstance()->isValidSource( $source ) ) {
                 $this->_source = $source;
-            } else {
-                MangaSourceList::getInstance()->displayInvalidMangaSourceMessage(true);
+            }
+            else {
+                MangaSourceList::getInstance()->displayInvalidMangaSourceMessage( TRUE );
             }
 
             // slug
 
-            $slug = Input::array_value($data,'slug','','trim');
+            $slug = Input::array_value( $data, 'slug', '', 'trim' );
 
-            if($slug == '') {
-                consoleLineError('Manga slug is required!',2);
+            if ( $slug == '' ) {
+                consoleLineError( 'Manga slug is required!', 2 );
 
-                consoleLinePurple('Example: --slug=nisekoi',2);
+                consoleLinePurple( 'Example: --slug=nisekoi', 2 );
 
-                Console::writeMultiline('Slug usualy means the SEO friendly name of the manga. But it can be different for different manga sources.The slug is part of the manga chapters list url.');
+                Console::writeMultiline( 'Slug usualy means the SEO friendly name of the manga. But it can be different for different manga sources.The slug is part of the manga chapters list url.' );
 
-                consoleLineInfo('');
+                consoleLineInfo( '' );
 
                 exit();
             }
@@ -301,9 +316,9 @@
 
             // name
 
-            $name = Input::array_value($data,'name','','trim');
+            $name = Input::array_value( $data, 'name', '', 'trim' );
 
-            if($name == '') {
+            if ( $name == '' ) {
                 $name = $this->_mangaSlug;
             }
 
@@ -311,38 +326,40 @@
 
             // Output dir
 
-            $output_dir = Input::array_value($data,'output-dir','','trim');
+            $output_dir = Input::array_value( $data, 'output-dir', '', 'trim' );
 
-            if($output_dir == '') {
+            if ( $output_dir == '' ) {
                 $output_dir = './manga/'.$this->_source.'/'.$this->_mangaSlug.'/';
             }
 
-            if(!is_dir($output_dir)) {
+            if ( !is_dir( $output_dir ) ) {
 
-                if(!mkdir($output_dir,0777,true)) {
+                if ( !mkdir( $output_dir, 0777, TRUE ) ) {
 
-                    consoleLineError("Unable to create output dir: ".$output_dir,2);
+                    consoleLineError( "Unable to create output dir: ".$output_dir, 2 );
 
-                    consoleLineInfo('');
+                    consoleLineInfo( '' );
 
                     exit();
 
 
                 }
-            } else {
+            }
+            else {
 
-                $tmpFile = tempnam($output_dir,'mst-');
+                $tmpFile = tempnam( $output_dir, 'mst-' );
 
-                if(!fopen($tmpFile,'w')) {
+                if ( !fopen( $tmpFile, 'w' ) ) {
 
-                    consoleLineError("Output dir is not writeable!".$output_dir,2);
+                    consoleLineError( "Output dir is not writeable!".$output_dir, 2 );
 
-                    consoleLineInfo('');
+                    consoleLineInfo( '' );
 
                     exit();
 
-                } else {
-                    @unlink($tmpFile);
+                }
+                else {
+                    @unlink( $tmpFile );
                 }
 
             }
@@ -351,9 +368,9 @@
 
             # chapters count
 
-            $chaptersCount = Input::array_value_as_int($data,'chapters-count',0);
+            $chaptersCount = Input::array_value_as_int( $data, 'chapters-count', 0 );
 
-            if($chaptersCount < 0) {
+            if ( $chaptersCount < 0 ) {
                 $chaptersCount = 0;
             }
 
@@ -361,23 +378,24 @@
 
             # chapter ids
 
-            $chapterIds = Input::array_value($data,'chapter-ids','','trim');
+            $chapterIds = Input::array_value( $data, 'chapter-ids', '', 'trim' );
 
-            if($chapterIds == '') {
+            if ( $chapterIds == '' ) {
 
                 $this->_chapter_ids = array();
 
-            } else {
+            }
+            else {
 
                 // is it a file?
 
-                if(is_readable($chapterIds)) {
-                    $chapterIds = trim(file_get_contents($chapterIds));
+                if ( is_readable( $chapterIds ) ) {
+                    $chapterIds = trim( file_get_contents( $chapterIds ) );
                 }
 
-                $chapterIds = explode(',',$chapterIds);
+                $chapterIds = explode( ',', $chapterIds );
 
-                $chapterIds = array_map('trim',$chapterIds);
+                $chapterIds = array_map( 'trim', $chapterIds );
 
                 // check for ranges
 
@@ -385,36 +403,36 @@
 
                 foreach ( $chapterIds as $k => $v ) {
 
-                    $cid = $chapterIds[$k];
+                    $cid = $chapterIds[ $k ];
 
-                    if (preg_match('/([0-9.]+)\s*-\s*([0-9.]+)/im', $cid, $regs)) {
+                    if ( preg_match( '/([0-9.]+)\s*-\s*([0-9.]+)/im', $cid, $regs ) ) {
 
-                        $chapterRangesIds[$k] = array(
-                            'start' => $regs[1],
-                            'end' => $regs[2]
+                        $chapterRangesIds[ $k ] = array(
+                            'start' => $regs[ 1 ],
+                            'end'   => $regs[ 2 ],
                         );
 
                     }
 
                 }
 
-                if(count($chapterRangesIds) > 0) {
+                if ( count( $chapterRangesIds ) > 0 ) {
 
                     // unset the range format entries first, as we are gonna get real
                     // chapter ids from that range next
 
-                    foreach($chapterRangesIds as $k => $rangeData) {
-                        unset($chapterIds[$k]);
+                    foreach ( $chapterRangesIds as $k => $rangeData ) {
+                        unset($chapterIds[ $k ]);
                     }
 
                     // get available chapters from ranges
 
-                    foreach($chapterRangesIds as $k => $rangeData) {
+                    foreach ( $chapterRangesIds as $k => $rangeData ) {
 
-                        $start = $rangeData['start'];
-                        $end = $rangeData['end'];
+                        $start = $rangeData[ 'start' ];
+                        $end = $rangeData[ 'end' ];
 
-                        for($i = $start;$i <= $end;$i += 1) {
+                        for ( $i = $start; $i <= $end; $i += 1 ) {
                             $chapterIds[] = $i;
                         }
 
@@ -422,38 +440,43 @@
 
                 }
 
-                asort($chapterIds);
+                asort( $chapterIds );
 
-                $chapterIds = array_unique($chapterIds);
+                $chapterIds = array_unique( $chapterIds );
 
                 $this->_chapter_ids = $chapterIds;
 
+
+
+
             }
+
+
 
 
             # create cbr
 
-            $createCbr = isset($data['create-cbr']) ? $data['create-cbr'] : true;
+            $createCbr = isset($data[ 'create-cbr' ]) ? $data[ 'create-cbr' ] : TRUE;
 
-            $result = strtolower(exec('type -p rar'));
+            $result = strtolower( exec( 'type -p rar' ) );
 
-            if(strpos($result,'not found')) {
-                consoleLineError('rar doesnt seem to be installed in the system!');
+            if ( strpos( $result, 'not found' ) ) {
+                consoleLineError( 'rar doesnt seem to be installed in the system!' );
 
-                $createCbr = false;
+                $createCbr = FALSE;
             }
 
             $this->_create_cbr = $createCbr;
 
-            if(!$this->_create_cbr) {
-                consoleLineError('.cbr files will not be created!');
+            if ( !$this->_create_cbr ) {
+                consoleLineError( '.cbr files will not be created!' );
             }
 
             # no cbr backup
 
-            if($this->_action == self::ACTION_RECREATE_CBR) {
+            if ( $this->_action == self::ACTION_RECREATE_CBR ) {
 
-                $this->_no_cbr_backup = isset($data['no-cbr-backup']) && $data['no-cbr-backup'];
+                $this->_no_cbr_backup = isset($data[ 'no-cbr-backup' ]) && $data[ 'no-cbr-backup' ];
 
             }
 
@@ -465,7 +488,7 @@
 
         public function getArgumentsList() {
 
-            return is_array($this->_argumentsList) ? $this->_argumentsList : array();
+            return is_array( $this->_argumentsList ) ? $this->_argumentsList : array();
         }
 
         /**
@@ -475,7 +498,7 @@
          */
         public function getAction() {
 
-            return trim($this->_action);
+            return trim( $this->_action );
         }
 
         /**
@@ -485,7 +508,7 @@
          */
         public function getSource() {
 
-            return trim($this->_source);
+            return trim( $this->_source );
         }
 
         /**
@@ -493,7 +516,7 @@
          */
         public function getMangaSlug() {
 
-            return trim($this->_mangaSlug);
+            return trim( $this->_mangaSlug );
         }
 
         /**
@@ -501,7 +524,7 @@
          */
         public function getMangaName() {
 
-            return trim($this->_mangaName);
+            return trim( $this->_mangaName );
         }
 
         /**
@@ -517,9 +540,9 @@
          */
         public function getChaptersCount() {
 
-            $count = (int)$this->_chapters_count;
+            $count = (int) $this->_chapters_count;
 
-            if($count < 0) {
+            if ( $count < 0 ) {
                 $count = 0;
             }
 
@@ -532,7 +555,7 @@
 
         public function getChapterIds() {
 
-            return is_array($this->_chapter_ids) ? $this->_chapter_ids : array();
+            return is_array( $this->_chapter_ids ) ? $this->_chapter_ids : array();
 
         }
 
@@ -557,7 +580,7 @@
         /**
          * @return boolean
          */
-        public function shouldCreateCbr () {
+        public function shouldCreateCbr() {
 
             return $this->_create_cbr;
         }
@@ -565,7 +588,7 @@
         /**
          * @return boolean
          */
-        public function shouldKeepCbrBackup () {
+        public function shouldKeepCbrBackup() {
 
             return !$this->_no_cbr_backup;
         }
@@ -575,7 +598,7 @@
          */
         public function getUsername() {
 
-            return trim($this->_username);
+            return trim( $this->_username );
         }
 
         /**
@@ -583,7 +606,7 @@
          */
         public function setUsername( $username ) {
 
-            $this->_username = trim($username);
+            $this->_username = trim( $username );
         }
 
         /**
@@ -591,7 +614,7 @@
          */
         public function getPassword() {
 
-            return trim($this->_password);
+            return trim( $this->_password );
         }
 
         /**
@@ -599,7 +622,45 @@
          */
         public function setPassword( $password ) {
 
-            $this->_password = trim($password);
+            $this->_password = trim( $password );
+        }
+
+        /**
+         * @return string
+         */
+        public function getChapterDelay() {
+
+            return ValueParser::parseDelayValue($this->_chapter_delay);
+        }
+
+        /**
+         * @param string $chapter_delay
+         */
+        public function setChapterDelay( $chapter_delay ) {
+
+            $this->_chapter_delay = $chapter_delay;
+
+        }
+        
+        /**
+         * get image fetch delay
+         *
+         * @return int
+         */
+        public function getImageDelay() {
+
+            return ValueParser::parseDelayValue($this->_image_delay);
+
+        }
+
+        /**
+         * Set image fetch delay
+         *
+         * @param string $image_delay
+         */
+        public function setImageDelay( $image_delay ) {
+
+            $this->_image_delay = $image_delay;
         }
 
     }

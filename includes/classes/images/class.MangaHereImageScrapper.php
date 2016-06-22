@@ -140,6 +140,19 @@
 
                 }
 
+                /**
+                 * @var ArgumentsList $objArgumentsList
+                 */
+
+                global $objArgumentsList;
+
+                $delay = $objArgumentsList->getImageDelay();
+
+                if($delay) {
+                    consoleLineInfo("Sleeping for ".$delay.' seconds');
+                    sleep($delay);
+                }
+
             }
 
             if($totalFetched == $totalImages) {

@@ -88,4 +88,20 @@
         if ( $chaptersCountToFetch > 0 && ($fetchedCount >= $chaptersCountToFetch) ) {
             break;
         }
+
+        /**
+         * @var ArgumentsList $objArgumentsList
+         */
+
+        global $objArgumentsList;
+
+        $delay = $objArgumentsList->getChapterDelay();
+
+        if($delay) {
+            consoleLineInfo("---------------------------------------");
+            consoleLineInfo("Sleeping for ".$delay.' seconds');
+            consoleLineInfo("---------------------------------------");
+
+            sleep($delay);
+        }
     }
